@@ -1,7 +1,7 @@
 
 // contracts/IMyVaultNFT.sol
 // SPDX-License-Identifier: MIT
-pragma solidity 0.5.5;
+pragma solidity ^0.6.0;
 
 interface IMyVault {
     function burn(uint256 tokenId) external;

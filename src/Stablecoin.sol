@@ -1,15 +1,14 @@
-pragma solidity 0.5.5;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20Detailed.sol";
-import "openzeppelin-contracts@v2.5.0/utils/ReentrancyGuard.sol";
-import "openzeppelin-contracts@v2.5.0/math/SafeMath.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/ERC20.sol";
+import "openzeppelin-contracts@v3.2.0/utils/ReentrancyGuard.sol";
+import "openzeppelin-contracts@v3.2.0/math/SafeMath.sol";
 
 import "./PriceSource.sol";
 
 import "./IMyVault.sol";
 
-contract Stablecoin is ERC20, ERC20Detailed, ReentrancyGuard {
+contract Stablecoin is ERC20, ReentrancyGuard {
     PriceSource public ethPriceSource;
     
     using SafeMath for uint256;
@@ -48,7 +47,7 @@ contract Stablecoin is ERC20, ERC20Detailed, ReentrancyGuard {
         string memory name,
         string memory symbol,
         address vaultAddress
-    ) ERC20Detailed(name, symbol, 18) public {
+    ) ERC20(name, symbol) public {
         assert(ethPriceSourceAddress != address(0));
         assert(minimumCollateralPercentage != 0);
                         //  | decimals start here

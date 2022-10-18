@@ -1,7 +1,7 @@
 
-pragma solidity 0.5.16;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/ownership/Ownable.sol";
+import "openzeppelin-contracts@v3.2.0/access/Ownable.sol";
 import "./erc20Stablecoin.sol";
 
 contract erc20QiStablecoin is erc20Stablecoin, Ownable {

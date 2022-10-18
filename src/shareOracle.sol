@@ -1,10 +1,10 @@
 // contracts/shareOracle.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.5.16;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts@v2.5.0/math/SafeMath.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/ERC20.sol";
+import "openzeppelin-contracts@v3.2.0/math/SafeMath.sol";
 
 import "./PriceSource.sol";
 

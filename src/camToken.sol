@@ -1,13 +1,12 @@
 // contracts/shareOracle.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.5.16;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/token/ERC20/SafeERC20.sol";
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20Detailed.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/SafeERC20.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/ERC20.sol";
 
-import "openzeppelin-contracts@v2.5.0/math/SafeMath.sol";
+import "openzeppelin-contracts@v3.2.0/math/SafeMath.sol";
 
 import "./interfaces/IAaveIncentivesController.sol";
 import "./interfaces/ILendingPool.sol";
@@ -23,7 +22,7 @@ interface Uni {
 }
 
 // stake Token to earn more Token (from farming)
-contract camToken is ERC20, ERC20Detailed {
+contract camToken is ERC20 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     
@@ -42,7 +41,7 @@ contract camToken is ERC20, ERC20Detailed {
     uint16 public depositFeeBP;
 
     // Define the compounding aave market token contract
-    constructor(address amToken, address underlying, string memory name, string memory symbol, uint8 decimals) ERC20Detailed(name, symbol, decimals) public {
+    constructor(address amToken, address underlying, string memory name, string memory symbol, uint8 decimals) ERC20(name, symbol) public {
 
         Token=amToken; //amusdc
         usdc=underlying;

@@ -1,15 +1,15 @@
 
 // contracts/MyVaultNFT.sol
 // SPDX-License-Identifier: MIT
-pragma solidity 0.5.5;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/token/ERC721/ERC721Full.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC721/ERC721Burnable.sol";
 
-contract VaultNFT is ERC721Full {
+contract VaultNFT is ERC721Burnable {
         
     address admin;
     
-    constructor() public ERC721Full("miMATIC Vault", "MMTV") {
+    constructor() public ERC721("miMATIC Vault", "MMTV") {
         admin = msg.sender;
     }
     
@@ -22,7 +22,7 @@ contract VaultNFT is ERC721Full {
         revert("transfer: disabled");
     }
     
-    function burn(uint256 tokenId) public {
+    function burn(uint256 tokenId) public override {
         require(
             msg.sender == admin,
             "Token: account does not have burn role"

@@ -1,10 +1,9 @@
-pragma solidity 0.5.16;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-contracts@v2.5.0/token/ERC20/SafeERC20.sol";
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts@v2.5.0/token/ERC20/ERC20Detailed.sol";
-import "openzeppelin-contracts@v2.5.0/utils/ReentrancyGuard.sol";
-import "openzeppelin-contracts@v2.5.0/math/SafeMath.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/SafeERC20.sol";
+import "openzeppelin-contracts@v3.2.0/token/ERC20/ERC20.sol";
+import "openzeppelin-contracts@v3.2.0/utils/ReentrancyGuard.sol";
+import "openzeppelin-contracts@v3.2.0/math/SafeMath.sol";
 
 import "../PriceSource.sol";
 
@@ -14,7 +13,7 @@ contract erc20Stablecoin is ReentrancyGuard, VaultNFTv3 {
     PriceSource public ethPriceSource;
     
     using SafeMath for uint256;
-    using SafeERC20 for ERC20Detailed;
+    using SafeERC20 for ERC20;
 
     uint256 public _minimumCollateralPercentage;
 
@@ -33,9 +32,9 @@ contract erc20Stablecoin is ReentrancyGuard, VaultNFTv3 {
 
     address public stabilityPool;
 
-    ERC20Detailed public collateral;
+    ERC20 public collateral;
 
-    ERC20Detailed public mai;
+    ERC20 public mai;
 
     uint8 public priceSourceDecimals;
 
@@ -74,8 +73,8 @@ contract erc20Stablecoin is ReentrancyGuard, VaultNFTv3 {
 
         _minimumCollateralPercentage = minimumCollateralPercentage;
 
-        collateral = ERC20Detailed(_collateral);
-        mai = ERC20Detailed(_mai);
+        collateral = ERC20(_collateral);
+        mai = ERC20(_mai);
         priceSourceDecimals = ethPriceSource.decimals();
     }
 

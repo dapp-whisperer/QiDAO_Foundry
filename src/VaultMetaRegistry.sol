@@ -1,12 +1,12 @@
-pragma solidity 0.5.16;
+pragma solidity ^0.6.0;
 
 import "./interfaces/IVaultMetaRegistry.sol";
-import "openzeppelin-contracts@v2.5.0/ownership/Ownable.sol";
+import "openzeppelin-contracts@v3.2.0/access/Ownable.sol";
 
 contract VaultMetaRegistry is IVaultMetaRegistry, Ownable {
     mapping (address => address) public _registry;
 
-    function getMetaProvider(address vault_address) public view returns (address) {
+    function getMetaProvider(address vault_address) public override view returns (address) {
         return _registry[vault_address];
     }
 
