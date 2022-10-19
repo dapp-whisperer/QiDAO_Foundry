@@ -6,12 +6,14 @@ import "../src/erc20Stablecoin/erc20QiStablecoin.sol";
 import "../src/QiStablecoin.sol";
 import "../src/MyVault.sol";
 import "../src/VaultMetaRegistry.sol";
+import "../src/mock/EACAggregatorProxyMock.sol";
 
 contract QiSetupTest is Test {
     QiStablecoin public mai;
     VaultNFT public maiNftVault;
     erc20QiStablecoin public vault;
     VaultMetaRegistry public vaultMetaRegistry;
+    EACAggregatorProxyMock fakelinkEthUsd;
     
     address constant CHAINLINK_ETH_USD = 0xF9680D99D6C9589e2a93a78A04A279e509205945;
     address constant WETH = 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619;
@@ -31,14 +33,25 @@ contract QiSetupTest is Test {
         string memory baseURI
     */
     function setUp() public {
+        fakelinkEthUsd = new EACAggregatorProxyMock();
+        fakelinkEthUsd.publishAnswer(1300e8); // 1000 dollars per ETH
+
         deal(address(weth), dev, 10000e18);
         _setupMai();
         _setupVault();
         deal(address(mai), address(vault), 10000e18);
     }
 
+    function _initialStateOneUser() internal returns (uint256) {
+        uint256 vaultId = vault.createVault();
+        console.log(vaultId);
+        weth.approve(address(vault), 10000e18);
+        vault.depositCollateral(vaultId, 3e18);
+        vault.borrowToken(vaultId, 1800e18);
+        return vaultId;
+    }
+
     function testDepositBorrow() public {
-        mai.decimals();
         uint256 vaultId = vault.createVault();
         console.log(vaultId);
         weth.approve(address(vault), 10000e18);
@@ -57,7 +70,48 @@ contract QiSetupTest is Test {
         _vaultState(vault, vaultId);
     }
 
+    function testWithdrawBurn() public {
+        uint256 vaultId = _initialStateOneUser();
+
+        _balanceSnapshot(dev);
+        _vaultState(vault, vaultId);
+
+        mai.approve(address(vault), 10000e18);
+        vault.payBackToken(vaultId, 500e8);
+
+        _balanceSnapshot(dev);
+        _vaultState(vault, vaultId);
+    }
+
+    function testPartialLiquidate() public {
+        uint256 vaultId = _initialStateOneUser();
+        _vaultState(vault, vaultId);
+        _userVaultState(vault, vaultId);
+        
+        //Make CDP Underwater
+
+        fakelinkEthUsd.publishAnswer(500e8);
+        _vaultState(vault, vaultId);
+        _userVaultState(vault, vaultId);
     
+        // Liquidate
+    }
+
+    function testPartialLiquidateStabilityPool() public {
+        // Test liquidations when only stability pool can cause liquidations
+    }
+
+    function _userVaultState(erc20QiStablecoin vault, uint256 vaultId) internal {
+        console.log("=== User Vault Health ===", vault.name(), vaultId);
+        console.log("vaultCollateral", vault.vaultCollateral(vaultId));
+        console.log("vaultDebt", vault.vaultDebt(vaultId));
+
+        console.log("checkCost", vault.checkCost(vaultId));
+        console.log("checkExtract", vault.checkExtract(vaultId));
+        console.log("checkCollateralPercentage", vault.checkCollateralPercentage(vaultId));
+        console.log("checkLiquidation", vault.checkLiquidation(vaultId));
+        console.log("");
+    }
 
     function _vaultState(erc20QiStablecoin vault, uint256 vaultId) internal {
         console.log("=== Vault State ===", vault.name(), vaultId);
@@ -110,7 +164,7 @@ contract QiSetupTest is Test {
         Arg [7] : baseURI (string): 
         */
         vault = new erc20QiStablecoin(
-            address(CHAINLINK_ETH_USD),
+            address(fakelinkEthUsd),
             150,
             "WETH MAI Vault",
             "WEMVT",
@@ -118,8 +172,6 @@ contract QiSetupTest is Test {
             address(WETH),
             address(vaultMetaRegistry),
             "https://ipfs.io/ipfs/"
-        );
-
-        
+        );        
     }
 }
